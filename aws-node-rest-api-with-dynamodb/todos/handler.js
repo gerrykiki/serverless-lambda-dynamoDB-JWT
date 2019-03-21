@@ -14,17 +14,34 @@ module.exports.hello = (event, context, callback) => {
 };
 
 module.exports.generateToken = (event, context, callback) => {
-  const token = authorizer.generateToken(event.body);
-  console.log(token);
 
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      token
-    })
-  };
+  const data = JSON.parse(event.body);
 
-  callback(null, response);
+  if (data.account === "123456" && data.password === "123456") {
+    const token = authorizer.generateToken(event.body);
+    console.log(token);
+  
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify({
+        token
+      })
+    };
+    callback(null, response);
+  
+  }
+  else{
+    //const token = authorizer.generateToken(event.body);
+    console.log("accounterror");
+  
+    const response = {
+      statusCode: 403,
+      body: JSON.stringify({
+        Account
+      })
+    };
+    callback(null, response);
+  }
 };
 
 module.exports.authorize = (event, context, callback) => {
