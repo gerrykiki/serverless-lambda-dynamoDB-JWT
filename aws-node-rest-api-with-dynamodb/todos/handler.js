@@ -17,7 +17,7 @@ module.exports.generateToken = (event, context, callback) => {
 
   const data = JSON.parse(event.body);
 
-  if (data.account === "123456" && data.password === "123456") {
+  if (data.account == "123456" && data.password == "123456") {
     const token = authorizer.generateToken(event.body);
     console.log(token);
   
@@ -33,11 +33,10 @@ module.exports.generateToken = (event, context, callback) => {
   else{
     //const token = authorizer.generateToken(event.body);
     console.log("accounterror");
-  
     const response = {
-      statusCode: 403,
+      statusCode: 200,
       body: JSON.stringify({
-        Account
+        message:'Account or Password Error'
       })
     };
     callback(null, response);
