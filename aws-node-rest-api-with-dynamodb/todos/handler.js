@@ -2,6 +2,19 @@
 
 const authorizer = require('./authorizer');
 
+
+
+module.exports.savecsvfile = (event, context, callback) => {
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'The token was valid and everything is fine!'
+    })
+  };
+
+  callback(null, response);
+};
+
 module.exports.hello = (event, context, callback) => {
   const response = {
     statusCode: 200,
@@ -54,4 +67,8 @@ module.exports.authorize = (event, context, callback) => {
     console.log(error.message);
     callback(error.message);
   }
+};
+
+module.exports.dynamodbtocsv = (event, context, callback) => {
+  
 };
