@@ -23,7 +23,7 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
     - Effect: Allow
       Action:
-        - s3:PutObject
+        - s3:*
       Resource: "arn:aws:s3:::downloadfilesys"
     
 
@@ -33,6 +33,15 @@ functions:
     events:
       - http:
           path: todos
+          method: post
+          cors: true
+          authorizer: authorize
+
+  webfrontcreate:
+    handler: todos/create.webupdatecreate
+    events:
+      - http:
+          path: webcreate
           method: post
           cors: true
           authorizer: authorize
@@ -90,6 +99,7 @@ functions:
           path: register
           method: post
           private: true
+          cors: true
   authorize:
     handler: todos/handler.authorize
 

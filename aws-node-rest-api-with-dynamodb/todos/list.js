@@ -50,7 +50,7 @@ module.exports.filesave = (event, context, callback) => {
     //var rs = fs.createReadStream('testdata.md');
     const s3 = new AWS.S3();
     const json2csv = require('json2csv');
-    const fields_chinese = ['checked', 'createdAt', 'text','id','updatedAt'];
+    const fields_chinese = ['Index', '性別', '語言','姿勢','整體平均血氧','四肢狀態','測驗日期','早晨的榕樹下.平衡感分數','早晨的榕樹下.協調感分數','早晨的榕樹下.最低血氧','早晨的榕樹下.答題時間(sec)','早晨的榕樹下.完成度分數','早晨的榕樹下.平均血氧','現在幾點鐘.找出正確時間','現在幾點鐘.找出正確時間答題時間','現在幾點鐘.找出正確時間2','現在幾點鐘.找出正確時間答題時間2','現在幾點鐘.找出正確時間3','現在幾點鐘.找出正確時間答題時間3','現在幾點鐘.找出正確時間4','現在幾點鐘.找出正確時間答題時間4','現在幾點鐘.最低血氧','現在幾點鐘.平均血氧','123木頭人.答對題數','123木頭人.答題時間','123木頭人.最低血氧','123木頭人.平均血氧'];
 
     const csv = json2csv({
       data: result.Items,
