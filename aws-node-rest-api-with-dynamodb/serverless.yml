@@ -23,7 +23,7 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
     - Effect: Allow
       Action:
-        - s3:*
+        - s3:*Object
       Resource: "arn:aws:s3:::downloadfilesys"
     
 
@@ -46,11 +46,31 @@ functions:
           cors: true
           authorizer: authorize
 
+
+
+  statisticchartdata:
+    handler: todos/list.statisticchart
+    events:
+      - http:
+          path: statisticchart
+          method: post
+          cors: true
+          authorizer: authorize
+
+  historyinfodata:
+    handler: todos/list.historyinfo
+    events:
+      - http:
+          path: historyinfo
+          method: post
+          cors: true
+          authorizer: authorize
+
   list:
     handler: todos/list.list
     events:
       - http:
-          path: todos
+          path: list
           method: get
           cors: true
           authorizer: authorize
@@ -59,7 +79,7 @@ functions:
     handler: todos/list.filesave
     events:
       - http:
-          path: list
+          path: filesave
           method: get
           cors: true
           authorizer: authorize

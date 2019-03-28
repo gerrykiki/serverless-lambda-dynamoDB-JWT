@@ -68,7 +68,3 @@ module.exports.authorize = (event, context, callback) => {
     callback(error.message);
   }
 };
-
-module.exports.dynamodbtocsv = (event, context, callback) => {
-  
-};

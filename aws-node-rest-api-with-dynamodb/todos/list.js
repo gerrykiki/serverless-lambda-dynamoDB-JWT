@@ -50,7 +50,7 @@ module.exports.filesave = (event, context, callback) => {
     //var rs = fs.createReadStream('testdata.md');
     const s3 = new AWS.S3();
     const json2csv = require('json2csv');
-    const fields_chinese = ['Index', '性別', '語言','姿勢','整體平均血氧','四肢狀態','測驗日期','早晨的榕樹下.平衡感分數','早晨的榕樹下.協調感分數','早晨的榕樹下.最低血氧','早晨的榕樹下.答題時間(sec)','早晨的榕樹下.完成度分數','早晨的榕樹下.平均血氧','現在幾點鐘.找出正確時間','現在幾點鐘.找出正確時間答題時間','現在幾點鐘.找出正確時間2','現在幾點鐘.找出正確時間答題時間2','現在幾點鐘.找出正確時間3','現在幾點鐘.找出正確時間答題時間3','現在幾點鐘.找出正確時間4','現在幾點鐘.找出正確時間答題時間4','現在幾點鐘.最低血氧','現在幾點鐘.平均血氧','123木頭人.答對題數','123木頭人.答題時間','123木頭人.最低血氧','123木頭人.平均血氧'];
+    const fields_chinese = ['id', 'gender', 'loacllanguage','limbstatus','posture','avgbloodoxy','testday','treecoordination.treecoordinationscore','treecoordination.treebalancescore','treecoordination.treecompletionscore','treecoordination.treeanswertime','treecoordination.treelowbloodoxy','treecoordination.treeavgbloodoxy','correcttime.firstcorrecttime','correcttime.firstcorrectanstime','correcttime.secondcorrecttime','correcttime.secondcorrectanstime','correcttime.thirdcorrecttime','correcttime.thirdcorrectanstime','correcttime.fourthcorrecttime','correcttime.fourthcorrectanstime','correcttime.timelowbloodoxy','correcttime.timeavgbloodoxy','onetwothreeans.onetwothreeansitem','onetwothreeans.onetwothreeanstime','onetwothreeans.onetwothreelowbloodoxy','onetwothreeans.onetwothreeavgbloodoxy'];
 
     const csv = json2csv({
       data: result.Items,
@@ -70,47 +70,101 @@ module.exports.filesave = (event, context, callback) => {
     };
     callback(null, response);
   });
-  
- /*
- const fetch = require('node-fetch');
- const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
- var fs = require('fs');
- //var rs = fs.createReadStream('testdata.md');
- 
- const s3 = new AWS.S3();
- 
- const json2csv = require('json2csv');
- 
- // basic
- const fields = ['car', 'price', 'color'];
- const myCars = [{
-     "car": "Audi",
-     "price": 40000,
-     "color": "blue"
- }, {
-     "car": "BMW",
-     "price": 35000,
-     "color": "black"
- }, {
-     "car": "Porsche",
-     "price": 60000,
-     "color": "green"
- }];
- const csv = json2csv({
-     data: myCars,
-     fields: fields
- });
+};
 
- s3.putObject({
-  Bucket: "downloadfilesys",
-  Key: "123.csv",
-  Body: csv,
-}).promise()
-const response = {
-  statusCode: 200,
-  body: "Success"
+module.exports.historyinfo = (event, context, callback) => {
+  
+  const data = JSON.parse(event.body);
+  var infodata = [];
+  dynamoDb.scan(params, (error, result) => {
+    // handle potential errors
+    if (error) {
+      console.error(error);
+      callback(null, {
+        statusCode: error.statusCode || 501,
+        headers: { 'Content-Type': 'text/plain' },
+        body: 'Couldn\'t fetch the todos.',
+      });
+      return;
+    }
+
+    const infodata = result.Items;
+    const infohistory = [];
+    for (let index = 0; index < infodata.length; index++) {
+      const element = infodata[index].idnumber;
+      if (element === data.idnumber) {
+        infohistory.push(infodata[index]);
+      }
+    }
+
+    // create a response
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify(infohistory),
+    };
+    callback(null, response);
+  });
 };
-callback(null, response);
-*/
+
+
+module.exports.statisticchart = (event, context, callback) => {
+  
+  const data = JSON.parse(event.body);
+  dynamoDb.scan(params, (error, result) => {
+    // handle potential errors
+    if (error) {
+      console.error(error);
+      callback(null, {
+        statusCode: error.statusCode || 501,
+        headers: { 'Content-Type': 'text/plain' },
+        body: 'Couldn\'t fetch the todos.',
+      });
+      return;
+    }
+    if (result.Items.testday === null) {
+      console.error(error);
+      callback(null, {
+        statusCode: error.statusCode || 501,
+        headers: { 'Content-Type': 'text/plain' },
+        body: 'No data',
+      });
+      return;
+    }
+    const infodata = ComplieDate(result.Items,data.update,data.downdate);
+    const resultdata = {
+      "sixtyfive":87,
+      "seventy":93,
+      "seventyfive":77,
+      "eighty":87,
+      "eightyfive":93,
+      "ninty":50,
+      "nintyfive":60,
+      "average":93,
+    };
+    // create a response
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify(resultdata),
+    };
+    callback(null, response);
+  });
 };
+
+function ComplieDate(nativedate,update,downdate){
+  var tempdate = [];
+  for (let index = 0; index < nativedate.length; index++) {
+      const element = nativedate[index].testday;
+      var tempdatechange = new Date(element);
+      var tempupdate = new Date(update);
+      var tempdowndate = new Date(downdate);
+      if (tempdatechange < tempupdate && tempdatechange > tempdowndate) {
+          console.log("success");
+          tempdate.push(nativedate[index]);
+      }
+      else{
+          console.log("Error");
+      }
+  }
+  return tempdate;
+}
 
